@@ -55,6 +55,7 @@ def _update_embeddings(history: list, new_emb: list) -> None:
 async def _handle_escalation_flow(session: SessionState, text: str) -> dict:
     """Execute the full agent transfer and coupon issuance escalation sequence."""
     breaker = execute_circuit_breaker(session, "irritation_breach", [text])
+    breaker["irritation_score"] = session.current_score
     
     # Check if eligibility rules authorize coupon discounts
     coupon_code = await issue_retention_coupon(session)

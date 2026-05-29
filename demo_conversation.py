@@ -18,7 +18,7 @@ CUSTOMER_METADATA = {
 SAMPLE_CONVERSATION = [
     "Hello, I need to check the status of my refund.",
     "It has been three weeks! This delay is extremely slow.",
-    "THIS IS USELESS. REFUND MY MONEY AND LET ME SPEAK TO A MANAGER RIGHT NOW!!!",
+    "What the shit man this company is so bad no solution to my problem",
 ]
 
 
@@ -62,8 +62,10 @@ async def run_simulation():
         
         # Display output status and score tracking
         status = response.get("status")
-        if status == "normal":
+        if "irritation_score" in response:
             print(f"Aggregate Irritation Score: {response.get('irritation_score'):.1f}/100")
+            
+        if status == "normal":
             print(f"AI Bot Response: {response.get('response')}\n")
         else:
             print(f"Status: CIRCUIT BREAKER TRIGGERED ({status})")
