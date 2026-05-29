@@ -2,8 +2,9 @@
 # Turn-by-turn simulation script to demonstrate CalmIQ middleware scoring and escalation
 
 import asyncio
+from datetime import datetime, timedelta
 from guardrail.middleware import IrritationMiddleware
-from guardrail.session.state import clear_all_sessions_for_testing
+from guardrail.session.state import clear_all_sessions_for_testing, get_session, save_session
 from guardrail.storage.store import clear_all_logs_for_testing
 
 # Sample metadata representing a returning customer
@@ -39,10 +40,16 @@ async def run_simulation():
         print(f"--- Turn {turn_idx} ---")
         print(f"Customer: {message}")
         
-        # Ingest telemetry (e.g. simulated rage clicks on the final angry turn)
         telemetry = None
+        # Simulate time elapsed before the final angry turn to satisfy hysteresis
         if turn_idx == 3:
             telemetry = {"rage_clicks": 4, "typing_speed_wpm": 160.0, "typing_pauses": 3}
+            # Fetch the session and backdate the timestamp to simulate a 65-second gap
+            sess = get_session(session_id)
+            if sess:
+                backdated_time = datetime.utcnow() - timedelta(seconds=65)
+                sess.last_updated = backdated_time.isoformat()
+                save_session(session_id, sess)
             
         # Process message through the interceptor
         response = await middleware.intercept_message(

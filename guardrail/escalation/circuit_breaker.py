@@ -52,5 +52,6 @@ def execute_circuit_breaker(
     return {
         "status": "escalated_to_agent",
         "message": "Chat has been transferred to a human agent.",
+        "reason": primary_signal,
         "coupon_issued": False,  # Managed by retention module subsequently
     }
