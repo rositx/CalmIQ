@@ -4,6 +4,35 @@ CalmIQ is a smart, real-time monitoring and safety layer that intercepts convers
 
 ---
 
+## Integration Flow Diagram
+
+The sequence diagram below displays how the CalmIQ Middleware Proxy acts as a safety gate between the customer UI, the company's AI chatbot, and the live agent pool:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Customer as Customer Chat UI
+    participant CalmIQ as CalmIQ Middleware Proxy
+    participant LLM as Company AI Support Bot
+    actor Agent as Human Support Agent
+
+    Customer->>CalmIQ: POST /api/v1/chat/message (User Input)
+    Note over CalmIQ: Intercept message, compute scores
+    
+    alt Score < Threshold (Normal Mode)
+        CalmIQ->>LLM: Forward clean message
+        LLM-->>CalmIQ: Return AI Bot response
+        CalmIQ-->>Customer: Return Bot response (Status: normal)
+    else Score >= Threshold (Frustrated / Looping)
+        Note over CalmIQ: Circuit Breaker Activated (Sever LLM)
+        CalmIQ->>Customer: Return Compensation Code (Status: escalated)
+        CalmIQ->>Agent: Broadcast live chat session context (WebSocket)
+        Agent->>Customer: Connect and continue conversation
+    end
+```
+
+---
+
 ## Folder Architecture
 
 The codebase follows the strict folder mapping layout specified by `RULES.md`:
