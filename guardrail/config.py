@@ -32,6 +32,13 @@ COUPON_COOLDOWN_DAYS = 30
 MIN_IRRITATION_DURATION_FOR_COUPON = 60
 MAX_LIFETIME_COUPONS = 3
 
+# Sentiment trigger keywords and profanities
+TRIGGER_KEYWORDS = [
+    "cancel", "refund", "manager", "human", "representative", 
+    "useless", "broken", "terrible", "worst", "unhelpful", "scam"
+]
+PROFANITY_KEYWORDS = ["shit", "fuck", "damn", "ass", "crap", "bastard"]
+
 # AI model identifiers for sentiment classification and embeddings
 SENTIMENT_MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
