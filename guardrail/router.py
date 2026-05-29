@@ -108,7 +108,13 @@ async def process_user_message(
     log_session_turn(session_id, session.turn_count, "user", text, s_score, score)
     
     if is_escalated:
-        return await _handle_escalation_flow(session, text)
+        breaker = await _handle_escalation_flow(session, text)
+        breaker["components"] = {
+            "sentiment_score": s_score,
+            "telemetry_score": b_score,
+            "context_score": c_score,
+        }
+        return breaker
         
     # Standard Flow: Return Mock Bot response and append AI embeddings
     mock_response = f"Thank you for your message. I am here to help you: {text}"
@@ -122,4 +128,9 @@ async def process_user_message(
         "status": "normal",
         "response": mock_response,
         "irritation_score": score,
+        "components": {
+            "sentiment_score": s_score,
+            "telemetry_score": b_score,
+            "context_score": c_score,
+        },
     }

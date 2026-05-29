@@ -65,6 +65,16 @@ async def run_simulation():
         if "irritation_score" in response:
             print(f"Aggregate Irritation Score: {response.get('irritation_score'):.1f}/100")
             
+        components = response.get("components")
+        if components:
+            s_val = components.get("sentiment_score", 0.0)
+            b_val = components.get("telemetry_score")
+            c_val = components.get("context_score", 0.0)
+            b_str = f"{b_val:.1f}/100" if b_val is not None else "N/A (Degraded Mode)"
+            print(f"  |-- [S] Sentiment Component Score: {s_val:.1f}/100")
+            print(f"  |-- [B] Telemetry Component Score: {b_str}")
+            print(f"  \\-- [C] Context Component Score:   {c_val:.1f}/100")
+            
         if status == "normal":
             print(f"AI Bot Response: {response.get('response')}\n")
         else:
